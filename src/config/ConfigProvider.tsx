@@ -13,7 +13,11 @@ import defaultConfig from "./siteConfig";
 import type { SiteConfig } from "./types";
 import { getClientSite, saveClientSite } from "@/lib/site-config.functions";
 
-export const DEFAULT_SITE_SLUG = "default";
+// Each client installation points at its own Supabase project, so "default" is
+// correct out of the box. VITE_SITE_SLUG only exists for the rarer case of
+// several client sites sharing one backend.
+export const DEFAULT_SITE_SLUG = import.meta.env["VITE_SITE_SLUG"] || "default";
+
 
 /**
  * Single source of truth for client data.

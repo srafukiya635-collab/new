@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthCallbackRouteImport } from './routes/auth_.callback'
 import { Route as ApiPublicAssetSplatRouteImport } from './routes/api/public/asset/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -40,6 +41,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth_/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicAssetSplatRoute = ApiPublicAssetSplatRouteImport.update({
   id: '/api/public/asset/$',
   path: '/api/public/asset/$',
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/book': typeof BookRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/api/public/asset/$': typeof ApiPublicAssetSplatRoute
 }
 export interface FileRoutesByTo {
@@ -58,6 +65,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/book': typeof BookRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/api/public/asset/$': typeof ApiPublicAssetSplatRoute
 }
 export interface FileRoutesById {
@@ -67,13 +75,26 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/book': typeof BookRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/auth_/callback': typeof AuthCallbackRoute
   '/api/public/asset/$': typeof ApiPublicAssetSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/book' | '/admin' | '/api/public/asset/$'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/book'
+    | '/admin'
+    | '/auth/callback'
+    | '/api/public/asset/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/book' | '/admin' | '/api/public/asset/$'
+  to:
+    | '/'
+    | '/auth'
+    | '/book'
+    | '/admin'
+    | '/auth/callback'
+    | '/api/public/asset/$'
   id:
     | '__root__'
     | '/'
@@ -81,6 +102,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/book'
     | '/_authenticated/admin'
+    | '/auth_/callback'
     | '/api/public/asset/$'
   fileRoutesById: FileRoutesById
 }
@@ -89,6 +111,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   BookRoute: typeof BookRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   ApiPublicAssetSplatRoute: typeof ApiPublicAssetSplatRoute
 }
 
@@ -129,6 +152,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/auth_/callback': {
+      id: '/auth_/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/asset/$': {
       id: '/api/public/asset/$'
       path: '/api/public/asset/$'
@@ -155,6 +185,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   BookRoute: BookRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   ApiPublicAssetSplatRoute: ApiPublicAssetSplatRoute,
 }
 export const routeTree = rootRouteImport
