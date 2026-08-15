@@ -72,9 +72,10 @@ export const claimFirstAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase.rpc("claim_ownership");
-    if (error) return { claimed: false, reason: "claim_failed" as const };
+    if (error) return { claimed: false, reason: error.message };
     return { claimed: data === true, reason: null };
   });
+
 
 /** Admin only: list current administrators (the DB function enforces the check). */
 export const listAdmins = createServerFn({ method: "GET" })
