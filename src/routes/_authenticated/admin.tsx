@@ -148,10 +148,18 @@ function AdminPage() {
               <CardDescription>
                 Your account is not an administrator for this template, so saving is disabled. Ask
                 an existing admin to grant you access.
+                {claimError ? (
+                  <span className="mt-2 block font-mono text-xs">
+                    Owner setup could not run: {claimError}. If this is a brand new installation,
+                    run <span className="font-semibold">database/setup.sql</span> in your Supabase
+                    SQL editor and reload.
+                  </span>
+                ) : null}
               </CardDescription>
             </CardHeader>
           </Card>
         ) : null}
+
 
         <Tabs defaultValue="business">
           <TabsList className="flex-wrap">
