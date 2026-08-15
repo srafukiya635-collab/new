@@ -73,17 +73,34 @@ function AuthPage() {
   async function handleGoogle() {
     setBusy(true);
     setMessage(null);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
-      setMessage("Google sign-in failed. Try email instead.");
+    try {
+      if (isLovableHost()) {
+        // Lovable preview/published host: use the iframe-safe managed broker.
+        const result = await lovable.auth.signInWithOAuth("google", {
+          redirect_uri: window.location.origin,
+        });
+        if (result.error) throw result.error;
+        if (result.redirected) return;
+        await navigate({ to: "/admin" });
+        return;
+      }
+
+      // Any other host (Vercel, custom domain, localhost): standard Supabase
+      // Google OAuth, returning to this deployment's own /auth/callback route.
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: authCallbackUrl("/admin") },
+      });
+      if (error) throw error;
+      // The browser is navigating to Google; nothing else to do.
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Google sign-in failed. Try email instead.",
+      );
       setBusy(false);
-      return;
     }
-    if (result.redirected) return;
-    await navigate({ to: "/admin" });
   }
+
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-4 py-16">
