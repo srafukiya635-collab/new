@@ -13,7 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
  * The file is named `auth_.callback.tsx` so it is a sibling of `/auth`
  * (not nested inside it).
  */
-export const Route = createFileRoute("/auth/callback")({
+export const Route = createFileRoute("/auth_/callback")({
   ssr: false,
   head: () => ({
     meta: [
