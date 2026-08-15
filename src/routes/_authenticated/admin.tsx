@@ -65,20 +65,26 @@ function AdminPage() {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isOwner, setIsOwner] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [claimError, setClaimError] = useState<string | null>(null);
   const [listKey, setListKey] = useState<ListKey>("gamingZones");
 
   useEffect(() => {
     let cancelled = false;
     async function check() {
       let status = await getAdminStatus();
+      let claimFailure: string | null = null;
       if (!status.isAdmin) {
+        // Fresh installation: the very first signed-in account claims
+        // ownership. The database decides — this is not a frontend grant.
         const claim = await claimFirstAdmin();
         if (claim.claimed) status = await getAdminStatus();
+        else if (claim.reason) claimFailure = claim.reason;
       }
       if (!cancelled) {
         setIsAdmin(status.isAdmin);
         setIsOwner(status.isOwner);
         setUserId(status.userId);
+        setClaimError(claimFailure);
       }
     }
     void check();
@@ -86,6 +92,7 @@ function AdminPage() {
       cancelled = true;
     };
   }, []);
+
 
   function setField<S extends keyof SiteConfig>(section: S, field: string, value: unknown) {
     update((draft) => {
